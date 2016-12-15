@@ -1,0 +1,14 @@
+name: Nicker
+version: 1.0.0
+main: RTG\Nick\NickName
+api: 2.1.0
+author: RTG
+website: https://rtgnetwork.tk
+commands:
+  nicker:
+    usage: "/nicker < set | off >"
+    description: "Set your nick!"
+    permission: nick.command
+permissions:
+  nick.command:
+    default: op
