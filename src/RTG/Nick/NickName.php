@@ -9,6 +9,7 @@ use pocketmine\event\Listener;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\utils\Config;
 
 class NickName extends PluginBase implements Listener {
 
@@ -20,10 +21,13 @@ class NickName extends PluginBase implements Listener {
 	
 	public function onEnable() {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
+		$this->saveResource("bannednames.txt");
 		$this->getLogger()->warning("
 * Nicker 1.0.0
 * Starting..
 		");
+		$this->bans = new Config($this->getDataFolder() . "bannednames.txt", Config::ENUM, array());
+		$this->bans->getAll();
 	}
 	
 	public function onCommand(CommandSender $sender, Command $cmd, $label, array $param) {
@@ -38,13 +42,17 @@ class NickName extends PluginBase implements Listener {
 							if(isset($param[1])) {
 							
 								$n = $param[1];
+								$b = $this->bans->getAll();
 								
 								if($sender instanceof Player) {
-								
-									$sender->setNameTag("** $n");
-									$sender->setDisplayName("** $n");
-									$sender->sendMessage("You nick has been set to $n");
-								
+									if($this->bans->get($n) === true) {
+											$sender->sendMessage("You cant use $n");
+									}
+									else {
+										$sender->setNameTag("** $n");
+										$sender->setDisplayName("** $n");
+										$sender->sendMessage("You nick has been set to $n");
+									}
 								}
 							}
 							else {
