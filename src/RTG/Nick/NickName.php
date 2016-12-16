@@ -23,11 +23,10 @@ class NickName extends PluginBase implements Listener {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 		$this->saveResource("bannednames.txt");
 		$this->getLogger()->warning("
-* Nicker 1.0.0
+* Nicker 1.0.1
 * Starting..
 		");
-		$this->bans = new Config($this->getDataFolder() . "bannednames.txt", Config::ENUM, array());
-		$this->bans->getAll();
+		$this->bans = new Config($this->getDataFolder() . "bannednames.txt");
 	}
 	
 	public function onCommand(CommandSender $sender, Command $cmd, $label, array $param) {
@@ -42,11 +41,10 @@ class NickName extends PluginBase implements Listener {
 							if(isset($param[1])) {
 							
 								$n = $param[1];
-								$b = $this->bans->getAll();
 								
 								if($sender instanceof Player) {
-									if($this->bans->get($n) === true) {
-											$sender->sendMessage("You cant use $n");
+									if($this->bans->get($n)) {
+											$sender->sendMessage("You cant use username called §c$n");
 									}
 									else {
 										$sender->setNameTag("** $n");
