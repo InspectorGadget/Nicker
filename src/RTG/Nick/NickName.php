@@ -22,11 +22,13 @@ class NickName extends PluginBase implements Listener {
 	public function onEnable() {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 		$this->saveResource("bannednames.txt");
+		$this->saveResource("config.yml");
 		$this->getLogger()->warning("
 * Nicker 1.0.1
 * Starting..
 		");
 		$this->bans = new Config($this->getDataFolder() . "bannednames.txt");
+		$this->cfg = new Config($this->getDataFolder() . "config.yml");
 	}
 	
 	public function onCommand(CommandSender $sender, Command $cmd, $label, array $param) {
@@ -41,15 +43,22 @@ class NickName extends PluginBase implements Listener {
 							if(isset($param[1])) {
 							
 								$n = $param[1];
+								$nn = count($n);
+								$words = $this->cfg->get("words");
 								
 								if($sender instanceof Player) {
-									if($this->bans->get($n)) {
-											$sender->sendMessage("You cant use username called §c$n");
+									if($nn > $words) {
+										if($this->bans->get($n)) {
+												$sender->sendMessage("You cant use username called §c$n");
+										}
+										else {
+											$sender->setNameTag("** $n");
+											$sender->setDisplayName("** $n");
+											$sender->sendMessage("You nick has been set to $n");
+										}
 									}
 									else {
-										$sender->setNameTag("** $n");
-										$sender->setDisplayName("** $n");
-										$sender->sendMessage("You nick has been set to $n");
+										$sender->sendMessage("You are exceeding 8 words! Please make it short and simple!");
 									}
 								}
 							}
@@ -71,10 +80,66 @@ class NickName extends PluginBase implements Listener {
 							}
 							return true;
 						break;
+						
+						case "reload":
+							if($sender->hasPermission("nick.command.admin")) {
+								foreach($this->getServer()->getOnlinePlayers() as $p) {
+									$p->setDisplayName($p->getName());
+									$p->setNameTag($p->getName());
+									$p->sendMessage("Your nick has been reset by an Admin!");
+									$this->getLogger()->warning("All nick's has been reset!");
+								}
+							}
+							else {
+								$sender->getMessage("You have no permission to use this command.");
+							}
+							return true;
+						break;
+						
+						case "add":
+							if($sender->hasPermission("nick.command.admin")) {
+								if(isset($param[0])) {
+									$n = $param[0];
+									
+									$this->bans->set($n);
+									$sender->sendMessage("You have added $n");
+								}
+								else {
+									$sender->sendMessage("Usage: /nicker add <name>"):
+								}
+							}
+							else {
+								$sender->sendMessage("You have no permission to use this command.");
+							}
+							return true;
+						break;
+						
+						case "remove":
+							if($sender->hasPermission("nick.command.admin")) {
+								if(isset($param[0])) {
+								
+									$w = $param[0];
+									
+									if($this->bans->get($w)) {
+										$this->bans->remove($w);
+									}
+									else {
+										$sender->sendMessage("$w doesn't exist on the system!");
+									}
+								}
+								else {
+									$sender->sendMessage("Usage: /nicker remove <name>");
+								}
+							}
+							else {
+								$sender->sendMessage("You have no permission to use this command.");
+							}
+							return true;
+						break;
 					}
 				}
 				else {
-					$sender->sendMessage("/nicker < set | off >");
+					$sender->sendMessage("/nicker < set | off | reload | add | remove >");
 				}
 			}
 			else {
