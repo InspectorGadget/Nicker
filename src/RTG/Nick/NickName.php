@@ -21,14 +21,12 @@ class NickName extends PluginBase implements Listener {
 	
 	public function onEnable() {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
-		$this->saveResource("bannednames.txt");
-		$this->saveResource("config.yml");
+		$this->saveResource("bannednames.yml");
 		$this->getLogger()->warning("
 * Nicker 1.0.1
 * Starting..
 		");
-		$this->bans = new Config($this->getDataFolder() . "bannednames.txt");
-		$this->cfg = new Config($this->getDataFolder() . "config.yml");
+		$this->bans = new Config($this->getDataFolder() . "bannednames.yml");
 	}
 	
 	public function onCommand(CommandSender $sender, Command $cmd, $label, array $param) {
@@ -44,22 +42,16 @@ class NickName extends PluginBase implements Listener {
 							
 								$n = $param[1];
 								$nn = count($n);
-								$words = $this->cfg->get("words");
 								
 								if($sender instanceof Player) {
-									if($nn > $words) {
 										if($this->bans->get($n)) {
-												$sender->sendMessage("You cant use username called §c$n");
+												$sender->sendMessage("You cant use username called ยงc$n");
 										}
 										else {
 											$sender->setNameTag("** $n");
 											$sender->setDisplayName("** $n");
 											$sender->sendMessage("You nick has been set to $n");
 										}
-									}
-									else {
-										$sender->sendMessage("You are exceeding 8 words! Please make it short and simple!");
-									}
 								}
 							}
 							else {
@@ -101,11 +93,11 @@ class NickName extends PluginBase implements Listener {
 								if(isset($param[0])) {
 									$n = $param[0];
 									
-									$this->bans->set($n);
+									$this->bans->set($n, true);
 									$sender->sendMessage("You have added $n");
 								}
 								else {
-									$sender->sendMessage("Usage: /nicker add <name>"):
+									$sender->sendMessage("Usage: /nicker add <name>");
 								}
 							}
 							else {
