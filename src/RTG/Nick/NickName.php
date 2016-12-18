@@ -21,12 +21,12 @@ class NickName extends PluginBase implements Listener {
 	
 	public function onEnable() {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
-		$this->saveResource("bannednames.yml");
+		$this->saveResource("bannednames.txt");
 		$this->getLogger()->warning("
-* Nicker 1.0.1
+* Nicker 1.0.2
 * Starting..
 		");
-		$this->bans = new Config($this->getDataFolder() . "bannednames.yml");
+		$this->bans = new Config($this->getDataFolder() . "bannednames.txt");
 	}
 	
 	public function onCommand(CommandSender $sender, Command $cmd, $label, array $param) {
@@ -45,7 +45,7 @@ class NickName extends PluginBase implements Listener {
 								
 								if($sender instanceof Player) {
 										if($this->bans->get($n)) {
-												$sender->sendMessage("You cant use username called ยงc$n");
+												$sender->sendMessage("You cant use username called §c$n");
 										}
 										else {
 											$sender->setNameTag("** $n");
@@ -79,7 +79,7 @@ class NickName extends PluginBase implements Listener {
 									$p->setDisplayName($p->getName());
 									$p->setNameTag($p->getName());
 									$p->sendMessage("Your nick has been reset by an Admin!");
-									$this->getLogger()->warning("All nick's has been reset!");
+									$this->getLogger()->warning("[Nicker] All nick's has been reset!");
 								}
 							}
 							else {
@@ -90,12 +90,12 @@ class NickName extends PluginBase implements Listener {
 						
 						case "add":
 							if($sender->hasPermission("nick.command.admin")) {
-								if(isset($param[0])) {
-									$n = $param[0];
+								if(isset($param[1])) {
+									$n = $param[1];
 									
-									$this->bans->set($n, true);
+									$this->bans->set($n);
 									$this->bans->save();
-									$sender->sendMessage("You have added $n");
+									$sender->sendMessage("You have added §c$n");
 								}
 								else {
 									$sender->sendMessage("Usage: /nicker add <name>");
@@ -109,12 +109,14 @@ class NickName extends PluginBase implements Listener {
 						
 						case "remove":
 							if($sender->hasPermission("nick.command.admin")) {
-								if(isset($param[0])) {
+								if(isset($param[1])) {
 								
-									$w = $param[0];
+									$w = $param[1];
 									
 									if($this->bans->get($w)) {
 										$this->bans->remove($w);
+										$this->bans->save();
+										$sender->sendMessage("You have removed §w");
 									}
 									else {
 										$sender->sendMessage("$w doesn't exist on the system!");
