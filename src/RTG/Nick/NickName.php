@@ -94,6 +94,7 @@ class NickName extends PluginBase implements Listener {
 									$n = $param[0];
 									
 									$this->bans->set($n, true);
+									$this->bans->save();
 									$sender->sendMessage("You have added $n");
 								}
 								else {
