@@ -1,5 +1,5 @@
 name: Nicker
-version: 1.0.2
+version: 1.0.3
 main: RTG\Nick\NickName
 api: 2.1.0
 author: RTG
