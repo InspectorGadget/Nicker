@@ -23,8 +23,8 @@ class NickName extends PluginBase implements Listener {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 		$this->saveResource("bannednames.txt");
 		$this->saveResource("config.yml");
-		$this->getLogger()->warning("
-* Nicker 1.0.3
+		$this->getLogger()->info("
+* Nicker 1.0.3 \n
 * Starting..
 		");
 		$this->bans = new Config($this->getDataFolder() . "bannednames.txt");
